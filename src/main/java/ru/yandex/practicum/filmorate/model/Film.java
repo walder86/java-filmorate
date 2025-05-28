@@ -26,8 +26,10 @@ public class Film {
     @Size(max = 200)
     private String description;
 
+    @NotNull
     private LocalDate releaseDate;
 
     @Positive
+    @NotNull
     private Integer duration;
 }

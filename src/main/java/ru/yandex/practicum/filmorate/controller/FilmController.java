@@ -20,16 +20,13 @@ public class FilmController {
 
     @GetMapping
     public Collection<Film> findAll() {
+        log.info("Запрос всех фильмов");
         return films.values();
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            log.debug("Дата рождения не может быть в будущем");
-            throw new ValidationException("Дата рождения не может быть в будущем");
-        }
+        checkDate(film);
 
         film.setId(getNextId());
 
@@ -44,6 +41,7 @@ public class FilmController {
             log.debug("Не указан Id при обновлении фильма");
             throw new ValidationException("Не указан Id при обновлении фильма");
         }
+        checkDate(newFilm);
         if (films.containsKey(newFilm.getId())) {
             Film oldFilm = films.get(newFilm.getId());
             oldFilm.setName(newFilm.getName());
@@ -64,6 +62,13 @@ public class FilmController {
                 .max()
                 .orElse(0);
         return ++currentMaxId;
+    }
+
+    private void checkDate(Film film) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            log.debug("Дата рождения не может быть в будущем");
+            throw new ValidationException("Дата рождения не может быть в будущем");
+        }
     }
 
 }

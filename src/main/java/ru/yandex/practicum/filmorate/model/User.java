@@ -19,13 +19,20 @@ public class User {
     private Long id;
 
     @Email
+    @NotNull
     private String email;
 
-    @NotNull
     @NotBlank
     private String login;
 
     private String name;
 
+    @NotNull
     private LocalDate birthday;
+
+    public void setNameWithCheck(User user) {
+        if (user.getName() == null || user.getName().isBlank())
+            this.setName(user.getLogin());
+        else this.setName(user.getName());
+    }
 }
