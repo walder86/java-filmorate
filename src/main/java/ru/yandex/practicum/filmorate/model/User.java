@@ -1,9 +1,8 @@
 package ru.yandex.practicum.filmorate.model;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,21 +14,25 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Film {
+public class User {
 
     private Long id;
 
+    @Email
     @NotNull
+    private String email;
+
     @NotBlank
+    private String login;
+
     private String name;
 
-    @Size(max = 200)
-    private String description;
-
     @NotNull
-    private LocalDate releaseDate;
+    private LocalDate birthday;
 
-    @Positive
-    @NotNull
-    private Integer duration;
+    public void setNameWithCheck(User user) {
+        if (user.getName() == null || user.getName().isBlank())
+            this.setName(user.getLogin());
+        else this.setName(user.getName());
+    }
 }
