@@ -25,11 +25,8 @@ public class UserService {
     }
 
     public User getUserById(Long userId) {
-        User user = userStorage.getUserById(userId);
-        if (user != null) {
-            return user;
-        }
-        throw new NotFoundException("Пользователь не найден с id = " + userId);
+        log.info("Получение пользователя с id = " + userId);
+        return getUserByIdWithCheck(userId);
     }
 
     public User createUser(User user) {
@@ -51,12 +48,7 @@ public class UserService {
             throw new ValidationException("Не указан Id при обновлении пользователя");
         }
 
-
-        User oldUser = userStorage.getUserById(newUser.getId());
-        if (oldUser == null) {
-            log.debug("Пользователь с id = " + newUser.getId() + " не найден");
-            throw new NotFoundException("Пользователь с id = " + newUser.getId() + " не найден");
-        }
+        User oldUser = getUserByIdWithCheck(newUser.getId());
 
         checkEmail(newUser.getEmail());
         checkLogin(newUser.getLogin());
@@ -72,21 +64,41 @@ public class UserService {
     }
 
     public List<User> getFriendsByUserId(Long userId) {
-        return userStorage.getFriends(userId);
+        User user = getUserByIdWithCheck(userId);
+        log.info("Получение друзей пользователя с id = " + userId);
+        return userStorage.getFriends(user);
     }
 
     public List<User> getCommonFriends(Long userId, Long otherUserId) {
-        return userStorage.getCommonFriends(userId, otherUserId);
+        User user = getUserByIdWithCheck(userId);
+        User otherUser = getUserByIdWithCheck(otherUserId);
+        log.info("Получение общих друзей пользователей с id = " + userId + " и " + otherUserId);
+        return userStorage.getCommonFriends(user, otherUser);
     }
 
     public void addFriend(Long userId, Long friendId) {
-        userStorage.addFriends(userId, friendId);
-        userStorage.addFriends(friendId, userId);
+        User user = getUserByIdWithCheck(userId);
+        User friend = getUserByIdWithCheck(friendId);
+        userStorage.addFriends(user, friendId);
+        userStorage.addFriends(friend, userId);
+        log.info("Пользователи с id = " + userId + " и " + friendId + " теперь друзья");
     }
 
     public void removeFriends(Long userId, Long friendId) {
-        userStorage.removeFriends(userId, friendId);
-        userStorage.removeFriends(friendId, userId);
+        User user = getUserByIdWithCheck(userId);
+        User friend = getUserByIdWithCheck(friendId);
+        userStorage.removeFriends(user, friendId);
+        userStorage.removeFriends(friend, userId);
+        log.info("Пользователи с id = " + userId + " и " + friendId + " перестали быть друзьями");
+    }
+
+    private User getUserByIdWithCheck(Long id) {
+        User user = userStorage.getUserById(id);
+        if (user == null) {
+           log.debug("Пользователь не найден с id = " + id);
+            throw new NotFoundException("Пользователь не найден с id = " + id);
+        }
+        return user;
     }
 
     private long getNextId() {

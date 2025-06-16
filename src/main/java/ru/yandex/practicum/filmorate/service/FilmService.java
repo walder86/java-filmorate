@@ -26,11 +26,8 @@ public class FilmService {
     }
 
     public Film getFilmById(Long filmId) {
-        Film film = filmStorage.getFilmById(filmId);
-        if (film != null) {
-            return film;
-        }
-        throw new NotFoundException("Фильм не найден с id = " + filmId);
+        log.info("Получение фильма с id = " + filmId);
+        return getFilmByIdWithCheck(filmId);
     }
 
     public Film create(Film film) {
@@ -49,11 +46,7 @@ public class FilmService {
             throw new ValidationException("Не указан Id при обновлении фильма");
         }
 
-        Film oldFilm = filmStorage.getFilmById(newFilm.getId());
-        if (oldFilm == null) {
-            log.debug("Фильм с id = " + newFilm.getId() + " не найден");
-            throw new NotFoundException("Фильм с id = " + newFilm.getId() + " не найден");
-        }
+        Film oldFilm = getFilmByIdWithCheck(newFilm.getId());
 
         checkDate(newFilm);
 
@@ -67,13 +60,26 @@ public class FilmService {
     }
 
     public void addLike(Long filmId, Long userId) {
+        Film film = getFilmByIdWithCheck(filmId);
         userService.getUserById(userId);
-        filmStorage.addLike(filmId, userId);
+        filmStorage.addLike(film, userId);
+        log.info("Лайк добавлен к фильму с id = " + filmId);
     }
 
     public void removeLike(Long filmId, Long userId) {
+        Film film = getFilmByIdWithCheck(filmId);
         userService.getUserById(userId);
-        filmStorage.removeLike(filmId, userId);
+        filmStorage.removeLike(film, userId);
+        log.info("Лайк удален с фильма с id = " + filmId);
+    }
+
+    private Film getFilmByIdWithCheck(Long id) {
+        Film film = filmStorage.getFilmById(id);
+        if (film == null) {
+            log.debug("Фильм не найден с id = " + id);
+            throw new NotFoundException("Фильм не найден с id = " + id);
+        }
+        return film;
     }
 
     private long getNextId() {
@@ -93,6 +99,10 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilms(Long count) {
+        if (count <= 0) {
+            throw new ValidationException("count должен быть больше 0");
+        }
+        log.info("Запрос " + count + " популярных фильмов");
         return filmStorage.getPopularFilms(count);
     }
 }

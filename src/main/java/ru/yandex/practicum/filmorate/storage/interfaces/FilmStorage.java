@@ -12,9 +12,9 @@ public interface FilmStorage {
 
     void addOrUpdateFilm(Film film);
 
-    void addLike(Long filmId, Long userId);
+    void addLike(Film film, Long userId);
 
-    void removeLike(Long filmId, Long userId);
+    void removeLike(Film film, Long userId);
 
     List<Film> getPopularFilms(Long count);
 }

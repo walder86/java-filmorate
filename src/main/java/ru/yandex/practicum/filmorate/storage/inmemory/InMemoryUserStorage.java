@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
@@ -33,32 +32,17 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void addFriends(Long userId, Long friendId) {
-        User user = getUserById(userId);
-        if (user == null) {
-            log.error("Пользователь с id = " + userId + " не найден");
-            throw new NotFoundException("Пользователь с id = " + userId + " не найден");
-        }
+    public void addFriends(User user, Long friendId) {
         user.addFriend(friendId);
     }
 
     @Override
-    public void removeFriends(Long userId, Long friendId) {
-        User user = getUserById(userId);
-        if (user == null) {
-            log.error("Пользователь с id = " + userId + " не найден");
-            throw new NotFoundException("Пользователь с id = " + userId + " не найден");
-        }
+    public void removeFriends(User user, Long friendId) {
         user.removeFriend(friendId);
     }
 
     @Override
-    public List<User> getFriends(Long id) {
-        User user = users.get(id);
-        if (user == null) {
-            log.error("Пользователь с id = " + id + " не найден");
-            throw new NotFoundException("Пользователь с id = " + id + " не найден");
-        }
+    public List<User> getFriends(User user) {
         List<Long> friendIds = user.getFriends();
         List<User> friends = friendIds.stream()
                 .map(users::get)
@@ -67,17 +51,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getCommonFriends(Long id, Long otherUserId) {
-        User user = users.get(id);
-        if (user == null) {
-            log.error("Пользователь с id = " + id + " не найден");
-            throw new NotFoundException("Пользователь с id = " + id + " не найден");
-        }
-        User otherUser = users.get(otherUserId);
-        if (otherUser == null) {
-            log.error("Пользователь с id = " + id + " не найден");
-            throw new NotFoundException("Пользователь с id = " + id + " не найден");
-        }
+    public List<User> getCommonFriends(User user, User otherUser) {
         List<User> commonFriends = user.getFriends().stream()
                 .filter(otherUser.getFriends()::contains)
                 .map(users::get)
