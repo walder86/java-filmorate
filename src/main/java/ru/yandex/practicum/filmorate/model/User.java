@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder(toBuilder = true)
@@ -29,6 +31,16 @@ public class User {
 
     @NotNull
     private LocalDate birthday;
+
+    private List<Long> friends = new ArrayList<>();
+
+    public void addFriend(Long friendId) {
+        friends.add(friendId);
+    }
+
+    public void removeFriend(Long friendId) {
+        friends.remove(friendId);
+    }
 
     public void setNameWithCheck(User user) {
         if (user.getName() == null || user.getName().isBlank())
