@@ -10,7 +10,9 @@ public interface UserStorage {
 
     public User getUserById(Long id);
 
-    public void addOrUpdateUser(User user);
+    public void createUser(User user);
+
+    public void updateUser(User user);
 
     void addFriends(User user, Long friendId);
 

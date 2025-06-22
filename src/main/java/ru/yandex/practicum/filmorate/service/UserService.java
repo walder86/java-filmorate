@@ -37,7 +37,7 @@ public class UserService {
         user.setId(getNextId());
         user.setNameWithCheck(user);
 
-        userStorage.addOrUpdateUser(user);
+        userStorage.createUser(user);
         log.info("Пользователь добавлен");
         return user;
     }
@@ -58,7 +58,7 @@ public class UserService {
         oldUser.setNameWithCheck(newUser);
         oldUser.setLogin(newUser.getLogin());
         oldUser.setBirthday(newUser.getBirthday());
-        userStorage.addOrUpdateUser(oldUser);
+        userStorage.updateUser(oldUser);
         log.info("Пользователь с id " + newUser.getId() + " обновлен");
         return oldUser;
     }
@@ -78,17 +78,15 @@ public class UserService {
 
     public void addFriend(Long userId, Long friendId) {
         User user = getUserByIdWithCheck(userId);
-        User friend = getUserByIdWithCheck(friendId);
+        getUserByIdWithCheck(friendId);
         userStorage.addFriends(user, friendId);
-        userStorage.addFriends(friend, userId);
         log.info("Пользователи с id = " + userId + " и " + friendId + " теперь друзья");
     }
 
     public void removeFriends(Long userId, Long friendId) {
         User user = getUserByIdWithCheck(userId);
-        User friend = getUserByIdWithCheck(friendId);
+        getUserByIdWithCheck(friendId);
         userStorage.removeFriends(user, friendId);
-        userStorage.removeFriends(friend, userId);
         log.info("Пользователи с id = " + userId + " и " + friendId + " перестали быть друзьями");
     }
 

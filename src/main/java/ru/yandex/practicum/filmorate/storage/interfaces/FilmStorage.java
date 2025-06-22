@@ -10,7 +10,9 @@ public interface FilmStorage {
 
     Film getFilmById(Long id);
 
-    void addOrUpdateFilm(Film film);
+    void createFilm(Film film);
+
+    void updateFilm(Film film);
 
     void addLike(Film film, Long userId);
 
