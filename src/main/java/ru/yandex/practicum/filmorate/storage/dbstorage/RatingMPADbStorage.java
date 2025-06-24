@@ -5,6 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.RatingMPA;
 import ru.yandex.practicum.filmorate.storage.interfaces.RatingMPAStorage;
 
@@ -26,7 +27,7 @@ public class RatingMPADbStorage implements RatingMPAStorage {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM rating_mpa WHERE id = ?", new DataClassRowMapper<>(RatingMPA.class), id);
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            throw new NotFoundException("Рейтинг MPA с id = " + id + " не найден");
         }
     }
 
@@ -35,7 +36,7 @@ public class RatingMPADbStorage implements RatingMPAStorage {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM rating_mpa WHERE id IN (SELECT rating_mpa_id FROM films WHERE id = ?);", new DataClassRowMapper<>(RatingMPA.class), id);
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            throw new NotFoundException("Рейтинг MPA фильма с id = " + id + " не найден");
         }
     }
 }

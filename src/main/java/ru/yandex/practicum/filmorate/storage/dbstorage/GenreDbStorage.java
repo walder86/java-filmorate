@@ -38,7 +38,7 @@ public class GenreDbStorage implements GenreStorage {
         try {
             return jdbcTemplate.query("SELECT * FROM genres WHERE id IN (SELECT genre_id FROM films_genre WHERE film_id = ?);", new DataClassRowMapper<>(Genre.class), id);
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            throw new NotFoundException("Жанры фильма с id = " + id + " не найден");
         }
 
     }
@@ -47,7 +47,7 @@ public class GenreDbStorage implements GenreStorage {
     public boolean checkGenresExists(List<Genre> genres) {
         for (Genre genre : genres) {
             if ((jdbcTemplate.query("SELECT * FROM genres WHERE id = ?", new DataClassRowMapper<>(Genre.class), genre.getId())).isEmpty()) {
-                throw new ValidationException("Жанр с id = " + genre.getId() + " отсутствует");
+                throw new ValidationException("Жанр с id = " + genre.getId() + " не найден");
             }
         }
         return true;
