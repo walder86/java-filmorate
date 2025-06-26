@@ -20,6 +20,10 @@ public class FilmService {
 
     final FilmStorage filmStorage;
 
+    private final GenreService genreService;
+
+    private final RatingMPAService ratingMPAService;
+
     public List<Film> getFilms() {
         log.info("Запрос всех фильмов");
         return filmStorage.getFilms();
@@ -35,7 +39,15 @@ public class FilmService {
 
         film.setId(getNextId());
 
-        filmStorage.addOrUpdateFilm(film);
+        if (film.getMpa() != null) {
+            ratingMPAService.getById(film.getMpa().getId());
+        }
+        if (film.getGenres() != null) {
+            film.getGenres().forEach(genre -> {
+                genreService.getById(genre.getId());
+            });
+        }
+        filmStorage.createFilm(film);
         log.info("Фильм добавлен");
         return film;
     }
@@ -54,7 +66,7 @@ public class FilmService {
         oldFilm.setDescription(newFilm.getDescription());
         oldFilm.setReleaseDate(newFilm.getReleaseDate());
         oldFilm.setDuration(newFilm.getDuration());
-        filmStorage.addOrUpdateFilm(oldFilm);
+        filmStorage.updateFilm(oldFilm);
         log.info("Фильм с id " + newFilm.getId() + " обновлен");
         return oldFilm;
     }

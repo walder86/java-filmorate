@@ -4,10 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -36,6 +33,12 @@ public class Film {
     private Integer duration;
 
     private List<Long> likes = new ArrayList<>();
+
+    private List<Genre> genres;
+
+    @NonNull
+    private RatingMPA mpa;
+
 
     public void addLike(Long userId) {
         likes.add(userId);

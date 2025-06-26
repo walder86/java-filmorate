@@ -7,6 +7,7 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.RatingMPA;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ public class FilmTest {
             .description("adipisicing")
             .releaseDate(LocalDate.parse("1895-12-28").plusDays(1))
             .duration(100)
+            .mpa(new RatingMPA(1L, "G"))
             .build();
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
